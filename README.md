@@ -1,2 +1,6 @@
-# linght-checkbox
-Checkbox use React
+# light-checkbox
+
+```
+npm intall 
+npm start
+```
