@@ -1,62 +1,34 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import PureRenderMixin from 'rc-util/lib/PureRenderMixin';
+import PropTypes, { func } from 'prop-types';
 import classNames from 'classnames';
 
 export default class Checkbox extends React.Component {
-  
-  static defaultProps = {
-    prefixCls: 'light-checkbox',
-    style: {},
-    type: 'checkbox',
-    defaultChecked: false,
-    onFocus() {},
-    onBlur() {},
-    onChange() {},
-  };
+
+
   constructor(props) {
     super(props);
-
-    const checked = 'checked' in props ? props.checked : props.defaultChecked;
+    const checked = this.props.defaultChecked||props.checked;
 
     this.state = {
       checked,
     };
   }
+  static defaultProps = {
+    prefixCls: 'light-checkbox',
+    style: {},
+    type: 'checkbox',
+    checked: false,
+  };
 
-  shouldComponentUpdate(...args) {
-    return PureRenderMixin.shouldComponentUpdate.apply(this, args);
-  }
-
-  focus() {
-    this.input.focus();
-  }
-
-  blur() {
-    this.input.blur();
-  }
-
-  handleChange = (e) => {
-    const { props } = this;
-    if (props.disabled) {
+  onClick = (e) => {
+  
+    if (this.props.disabled) {
       return;
     }
-    if (!('checked' in props)) {
-      this.setState({
-        checked: e.target.checked,
-      });
-    }
-    props.onChange({
-      target: {
-        ...props,
-        checked: e.target.checked,
-      },
-      stopPropagation() {
-        e.stopPropagation();
-      },
-      preventDefault() {
-        e.preventDefault();
-      },
+    this.setState({
+      checked: !this.state.checked,
+    },()=>{
+      this.props.onClick(this)
     });
   };
 
@@ -68,32 +40,19 @@ export default class Checkbox extends React.Component {
       name,
       type,
       disabled,
-      readOnly,
-      tabIndex,
       onClick,
-      onFocus,
-      onBlur,
-      autoFocus,
-      value,
-      ...others,
     } = this.props;
-    
 
-    const { checked } = this.state;
+
+    // const { checked } = this.state;
     const classString = classNames(prefixCls, className, {
-      [`${prefixCls}-checked`]: checked,
+      [`${prefixCls}-checked`]: this.state.checked,
       [`${prefixCls}-disabled`]: disabled,
     });
 
     return (
-      <span className={classString} style={style}>
-        <input  
-        type={type}
-        disabled = {disabled} 
-        onChange = {this.handleChange}
-        onClick = {onClick}      
-        />
-        <span className />
+      <span className={classString} style={style} onClick={this.onClick.bind(this.props)}>
+
       </span>
     );
   }
